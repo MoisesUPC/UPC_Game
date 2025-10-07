@@ -6,12 +6,20 @@ public class PlayerMove : MonoBehaviour
     private Rigidbody2D body;
     private SpriteRenderer sprite;
     // Llamemos a los inputs
-    InputAction moveAction;
-    InputAction jumpAction;
+    private InputAction moveAction;
+    private InputAction jumpAction;
+    // Campo que detecte el salto
+    private bool canJump;
 
     // Los campos serializados pueden ser modificados en el editor
     [SerializeField] private float speedX;
     [SerializeField] private float jumpImpulse;
+
+    // Vamos a agregar propiedades para detectar un piso
+    [Header("Ground Detection Fields")]
+    [SerializeField] private Transform groundDetection;
+    [SerializeField] private float radiusDetection;
+    [SerializeField] private LayerMask layerDetection;
 
     private void Awake()
     {
@@ -29,6 +37,10 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Collider2D col = Physics2D.OverlapCircle(groundDetection.position, radiusDetection, layerDetection);
+        // Si el collider existe, es porque hemos detectado un piso con nuestro detector.
+        canJump = col != null;
+
         Vector2 move = moveAction.ReadValue<Vector2>();
         // Al multiplicar el componente en x por la velocidad tenemos la velocidad relativa en x
         body.linearVelocityX = move.x * speedX;
@@ -37,7 +49,7 @@ public class PlayerMove : MonoBehaviour
             sprite.flipX = move.x < 0 ? true : false;
         }
 
-        if (jumpAction.WasPressedThisFrame())
+        if (jumpAction.WasPressedThisFrame() && canJump)
         {
             body.linearVelocityY = jumpImpulse;
         }
