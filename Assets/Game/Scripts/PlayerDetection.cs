@@ -22,4 +22,15 @@ public class PlayerDetection : MonoBehaviour
             transform.localPosition = checkpointPosition;
         }
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Detectamos al enemigo
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Chocamos Enemigo...");
+            // Colocamos al sapo en una posición checkpoint
+            transform.localPosition = checkpointPosition;
+        }
+    }
 }
