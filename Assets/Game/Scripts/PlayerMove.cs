@@ -5,6 +5,7 @@ public class PlayerMove : MonoBehaviour
 {
     private Rigidbody2D body;
     private SpriteRenderer sprite;
+    private Animator animator;
     // Llamemos a los inputs
     private InputAction moveAction;
     private InputAction jumpAction;
@@ -25,6 +26,7 @@ public class PlayerMove : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -53,5 +55,8 @@ public class PlayerMove : MonoBehaviour
         {
             body.linearVelocityY = jumpImpulse;
         }
+
+        // Acá vamos a controlar el animator
+        animator.SetInteger("moveX", (int)move.x);
     }
 }
