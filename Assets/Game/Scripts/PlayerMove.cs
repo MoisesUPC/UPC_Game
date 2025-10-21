@@ -10,7 +10,7 @@ public class PlayerMove : MonoBehaviour
     private InputAction moveAction;
     private InputAction jumpAction;
     // Campo que detecte el salto
-    private bool canJump;
+    private bool isInGround;
 
     // Los campos serializados pueden ser modificados en el editor
     [SerializeField] private float speedX;
@@ -41,7 +41,7 @@ public class PlayerMove : MonoBehaviour
     {
         Collider2D col = Physics2D.OverlapCircle(groundDetection.position, radiusDetection, layerDetection);
         // Si el collider existe, es porque hemos detectado un piso con nuestro detector.
-        canJump = col != null;
+        isInGround = col != null;
 
         Vector2 move = moveAction.ReadValue<Vector2>();
         // Al multiplicar el componente en x por la velocidad tenemos la velocidad relativa en x
@@ -51,12 +51,14 @@ public class PlayerMove : MonoBehaviour
             sprite.flipX = move.x < 0 ? true : false;
         }
 
-        if (jumpAction.WasPressedThisFrame() && canJump)
+        if (jumpAction.WasPressedThisFrame() && isInGround)
         {
             body.linearVelocityY = jumpImpulse;
         }
 
         // Acá vamos a controlar el animator
         animator.SetInteger("moveX", (int)move.x);
+        animator.SetBool("IsInGround", isInGround);
+        animator.SetFloat("speedY", body.linearVelocityY);
     }
 }
