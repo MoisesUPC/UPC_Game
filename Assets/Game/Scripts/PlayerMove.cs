@@ -11,6 +11,8 @@ public class PlayerMove : MonoBehaviour
     private InputAction jumpAction;
     // Campo que detecte el salto
     private bool isInGround;
+    // Campo para que detecte zona resbalosa
+    private bool isSlippery;
 
     // Los campos serializados pueden ser modificados en el editor
     [SerializeField] private float speedX;
@@ -22,8 +24,13 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] private float radiusDetection;
     [SerializeField] private LayerMask layerDetection;
 
+    [Header("Slippery")]
+    [SerializeField] private float slipperyAccelaration = 10f;
+
     private void Awake()
     {
+        isInGround = false;
+        isSlippery = false;
         body = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
@@ -45,7 +52,23 @@ public class PlayerMove : MonoBehaviour
 
         Vector2 move = moveAction.ReadValue<Vector2>();
         // Al multiplicar el componente en x por la velocidad tenemos la velocidad relativa en x
-        body.linearVelocityX = move.x * speedX;
+        if (isSlippery)
+        {
+            if (move.x != 0)
+            {
+                // Cuando es resbaloso vamos a darle una aceleración.
+                if (Mathf.Abs(body.linearVelocityX) <= speedX)
+                    body.linearVelocityX += move.x * slipperyAccelaration * Time.deltaTime;
+                else
+                    body.linearVelocityX = body.linearVelocityX > 0 ? speedX : -speedX;
+            }
+        }
+        else
+        {
+            // No es resbaloso
+            body.linearVelocityX = move.x * speedX;
+        }
+            
         if (move.x != 0)
         {
             sprite.flipX = move.x < 0 ? true : false;
@@ -60,5 +83,10 @@ public class PlayerMove : MonoBehaviour
         animator.SetInteger("moveX", (int)move.x);
         animator.SetBool("IsInGround", isInGround);
         animator.SetFloat("speedY", body.linearVelocityY);
+    }
+
+    public void ActivateSlippery(bool slippery)
+    {
+        isSlippery = slippery;
     }
 }

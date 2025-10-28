@@ -4,6 +4,7 @@ public class PlayerDetection : MonoBehaviour
 {
     private Vector3 checkpointPosition;
 
+
     private void Start()
     {
         // Ubicamos el checkpoint usando la etiqueta
@@ -20,6 +21,27 @@ public class PlayerDetection : MonoBehaviour
             Debug.Log("Detecta DeadZone...");
             // Colocamos al sapo en una posición checkpoint
             transform.localPosition = checkpointPosition;
+        }
+
+        DetectAndChangeSlippery(collision, true);
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        DetectAndChangeSlippery(collision, false);
+    }
+
+    private void DetectAndChangeSlippery(Collider2D collision, bool isSlippery)
+    {
+        // Detectamos la zona de resbalo
+        if (collision.CompareTag("SlipperyZone"))
+        {
+            string message = isSlippery ? "Entra zona resbalosa" : "Sale zona resbalosa";
+            Debug.Log(message);
+            // Invocamos al script de Player Move para cambiar su estado resbaloso
+            PlayerMove move = GetComponent<PlayerMove>();
+            if (move != null)
+                move.ActivateSlippery(isSlippery);
         }
     }
 
