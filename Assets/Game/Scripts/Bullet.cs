@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Bullet : MonoBehaviour
 {
@@ -8,26 +9,40 @@ public class Bullet : MonoBehaviour
 
     private Rigidbody2D body;
 
+    private BulletPool pool;
+
     private float timer;
     private bool isActive;
 
-    private void Awake()
+    public void Init(BulletPool pool)
     {
         body = GetComponent<Rigidbody2D>();
+        isActive = false;
 
-        timer = timeToDisappear;
-        isActive = true;
+        this.pool = pool;
+    }
+
+    public void ResetBullet()
+    {
+        transform.position = Vector3.zero;
+        body.linearVelocityX = 0f;
+        body.linearVelocityY = 0f;
+        isActive = false;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Activate(float angle, float speed, float time)
     {
-        float angle = currentAngle * Mathf.Deg2Rad;
-        float speedX = Mathf.Cos(angle) * speed;
-        float speedY = Mathf.Sin(angle) * speed;
+        float speedX = Mathf.Cos(angle * Mathf.Deg2Rad) * speed;
+        float speedY = Mathf.Sin(angle * Mathf.Deg2Rad) * speed;
 
         body.linearVelocityX = speedX;
         body.linearVelocityY = speedY;
+
+        timeToDisappear = time;
+        timer = timeToDisappear;
+
+        isActive = true;
     }
 
     // Update is called once per frame
@@ -43,7 +58,7 @@ public class Bullet : MonoBehaviour
             body.linearVelocityX = 0f;
             body.linearVelocityY = 0f;
 
+            pool.PushBullet(this);
         }
-
     }
 }

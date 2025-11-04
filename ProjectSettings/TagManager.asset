@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - SlipperyZone
   - Bullet
+  - BulletContainer
   layers:
   - Default
   - TransparentFX
