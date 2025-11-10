@@ -32,12 +32,12 @@ public class Bullet : MonoBehaviour
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void Activate(Vector3 initPosition, float angle, float speed, float time)
+    public void Activate(Vector2 initPosition, float angle, float speed, float time)
     {
-        transform.localPosition = initPosition + Vector3.up * 0.5f;
+        transform.localPosition = initPosition;
 
-        currentSpeed.x = Mathf.Cos(angle * Mathf.Deg2Rad) * speed;
-        currentSpeed.y = Mathf.Sin(angle * Mathf.Deg2Rad) * speed;
+        currentSpeed.x = Mathf.Cos(angle) * speed;
+        currentSpeed.y = Mathf.Sin(angle) * speed;
 
         timeToDisappear = time;
         timer = timeToDisappear;
