@@ -23,7 +23,7 @@ public class PlayerShoot : MonoBehaviour
             if (attackAction.WasPressedThisFrame())
             {
                 Bullet bullet = bulletPool.GetBullet();
-                bullet.Activate(40f, 5f, 3);
+                bullet.Activate(transform.localPosition, 40f, 5f, 3);
                 bullet.gameObject.SetActive(true);
             }
         }

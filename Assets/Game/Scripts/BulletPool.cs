@@ -40,7 +40,7 @@ public class BulletPool : MonoBehaviour
         return bulletObj;
     }
 
-    public void PushBullet(Bullet bullet)
+    public void ReturnBulletToPool(Bullet bullet)
     {
         bullet.ResetBullet();
         bullet.gameObject.SetActive(false);

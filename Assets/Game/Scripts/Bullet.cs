@@ -3,12 +3,10 @@ using UnityEngine.UIElements;
 
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private float currentAngle;
-    [SerializeField] private float speed;
-    [SerializeField] private float timeToDisappear;
+    private Vector2 currentSpeed;
+    private float timeToDisappear;
 
     private Rigidbody2D body;
-
     private BulletPool pool;
 
     private float timer;
@@ -16,6 +14,7 @@ public class Bullet : MonoBehaviour
 
     public void Init(BulletPool pool)
     {
+        currentSpeed = new Vector2 (0f, 0f);
         body = GetComponent<Rigidbody2D>();
         isActive = false;
 
@@ -25,19 +24,20 @@ public class Bullet : MonoBehaviour
     public void ResetBullet()
     {
         transform.position = Vector3.zero;
-        body.linearVelocityX = 0f;
-        body.linearVelocityY = 0f;
+        currentSpeed.x = 0f;
+        currentSpeed.y = 0f;
+        body.linearVelocityX = currentSpeed.x;
+        body.linearVelocityY = currentSpeed.y;
         isActive = false;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void Activate(float angle, float speed, float time)
+    public void Activate(Vector3 initPosition, float angle, float speed, float time)
     {
-        float speedX = Mathf.Cos(angle * Mathf.Deg2Rad) * speed;
-        float speedY = Mathf.Sin(angle * Mathf.Deg2Rad) * speed;
+        transform.localPosition = initPosition + Vector3.up * 0.5f;
 
-        body.linearVelocityX = speedX;
-        body.linearVelocityY = speedY;
+        currentSpeed.x = Mathf.Cos(angle * Mathf.Deg2Rad) * speed;
+        currentSpeed.y = Mathf.Sin(angle * Mathf.Deg2Rad) * speed;
 
         timeToDisappear = time;
         timer = timeToDisappear;
@@ -51,14 +51,12 @@ public class Bullet : MonoBehaviour
         if (!isActive)
             return;
         timer -= Time.deltaTime;
+        body.linearVelocityX = currentSpeed.x;
+        body.linearVelocityY = currentSpeed.y;
         if (timer <= 0f)
         {
             timer = 0f;
-            isActive = false;
-            body.linearVelocityX = 0f;
-            body.linearVelocityY = 0f;
-
-            pool.PushBullet(this);
+            pool.ReturnBulletToPool(this);
         }
     }
 }
